@@ -209,7 +209,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("NormNyHourStart", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 1)]
+        [Display(GroupName = "Algo", Order = 1)]
 #endif
         public int NormNyHourStart { get; set; }
 
@@ -217,7 +217,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("NormNyHourEnd", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 2)]
+        [Display(GroupName = "Algo", Order = 2)]
 #endif
         public int NormNyHourEnd { get; set; }
 
@@ -225,7 +225,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Period1", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 3)]
+        [Display(GroupName = "Algo", Order = 3)]
 #endif
         public int Period1 { get; set; }
 
@@ -233,7 +233,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Period2", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 4)]
+        [Display(GroupName = "Algo", Order = 4)]
 #endif
         public int Period2 { get; set; }
 
@@ -241,7 +241,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Period3", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 5)]
+        [Display(GroupName = "Algo", Order = 5)]
 #endif
         public int Period3 { get; set; }
 
@@ -249,7 +249,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Period4", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 6)]
+        [Display(GroupName = "Algo", Order = 6)]
 #endif
         public int Period4 { get; set; }
 
@@ -257,7 +257,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Ma3Ma4DiffMaxPercent", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 7)]
+        [Display(GroupName = "Algo", Order = 7)]
 #endif
         public double Ma3Ma4DiffMaxPercent { get; set; }
 
@@ -265,7 +265,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Ma1Ma2MinPercent", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 8)]
+        [Display(GroupName = "Algo", Order = 8)]
 #endif
         public double Ma1Ma2MinPercent { get; set; }
 
@@ -273,7 +273,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("Ma1Ma2MaxPercent", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 9)]
+        [Display(GroupName = "Algo", Order = 9)]
 #endif
         public double Ma1Ma2MaxPercent { get; set; }
 
@@ -281,7 +281,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("TakeProfitPips", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 10)]
+        [Display(GroupName = "Algo", Order = 10)]
 #endif
         public double TakeProfitPips { get; set; }
 
@@ -289,7 +289,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         [Parameter("StopLossPips", Group = "System", DefaultValue = false)]
 #else
         [NinjaScriptProperty]
-        [Display(ResourceType = typeof(NinjaTrader.Custom.Resource), GroupName = "Algo", Order = 11)]
+        [Display(GroupName = "Algo", Order = 11)]
 #endif
         public double StopLossPips { get; set; }
         #endregion
