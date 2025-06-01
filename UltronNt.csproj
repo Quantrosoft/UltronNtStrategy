@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AssemblyName>NinjaTrader.Custom</AssemblyName>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <DefineConstants>$(DefineConstants);$(CiConstants)</DefineConstants>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
