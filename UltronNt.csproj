@@ -84,8 +84,8 @@
     <Compile Include="UltronInstance.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\cAlgoNt8Indicators\cAlgoNt8Indicators.csproj" />
     <ProjectReference Include="..\..\cAlgoNt8Wrapper\cAlgoNt8Wrapper.csproj" />
-    <ProjectReference Include="..\cAlgoNt8Indicators\cAlgoNt8Indicators.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">
