@@ -84,7 +84,6 @@
     <Compile Include="UltronInstance.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\cAlgoNt8Indicators\cAlgoNt8Indicators.csproj" />
     <ProjectReference Include="..\..\cAlgoNt8Wrapper\cAlgoNt8Wrapper.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -147,4 +146,7 @@
       <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\WPF\UIAutomationProvider.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(ProjDir)*.cs&quot; &quot;$(SolutionDir)..\..\NinjaTrader 8\bin\Custom\Strategies\UltronNt&quot;" />
+  </Target>
 </Project>
