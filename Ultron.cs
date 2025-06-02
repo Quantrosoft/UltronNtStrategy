@@ -741,7 +741,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         }
 
         // Called at bars frequency
-        private void OnBar()
+        protected override void OnBar()
         {
             LastBar = Bars.Count;
         }
