@@ -147,6 +147,6 @@
     </Reference>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y &quot;$(ProjDir)*.cs&quot; &quot;$(SolutionDir)..\..\NinjaTrader 8\bin\Custom\Strategies\UltronNt&quot;" />
+    <Exec Command="robocopy . &quot;$(SolutionDir)..\..\NinjaTrader 8\bin\Custom\Strategies\$(ProjectName)&quot; *.cs /NFL /NDL /NJH /NJS /NC /NS /NP &amp; exit 0&#xD;&#xA;" />
   </Target>
 </Project>
