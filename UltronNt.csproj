@@ -73,6 +73,7 @@
     <Page Remove="SuperDomColumns\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove=".git" />
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
     <None Remove="250524 Cs Coding Conventions.txt" />
