@@ -118,20 +118,14 @@
     <Reference Include="SharpDX.Direct2D1">
       <HintPath>C:\Program Files\NinjaTrader 8\bin\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX.DXGI">
-      <HintPath>C:\Users\HMz\Documents\NinjaTrader 8\bin\Custom\bin\Debug\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Controls.WpfPropertyGrid">
-      <HintPath>C:\Users\HMz\Documents\NinjaTrader 8\bin\Custom\bin\Debug\System.Windows.Controls.WpfPropertyGrid.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing">
-      <HintPath>C:\Users\HMz\Documents\NinjaTrader 8\bin\Custom\bin\Debug\System.Drawing.dll</HintPath>
+      <HintPath>$(UserProfile)\Documents\NinjaTrader 8\bin\Custom\bin\Debug\System.Drawing.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression">
       <HintPath>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.IO.Compression.dll</HintPath>
     </Reference>
     <Reference Include="NinjaTrader.Vendor">
-      <HintPath>C:\Users\HMz\Documents\NinjaTrader 8\bin\Custom\NinjaTrader.Vendor.dll</HintPath>
+      <HintPath>$(UserProfile)\Documents\NinjaTrader 8\bin\Custom\NinjaTrader.Vendor.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase">
       <HintPath>C:\Windows\Microsoft.NET\Framework\v4.0.30319\WPF\WindowsBase.dll</HintPath>
