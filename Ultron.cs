@@ -443,7 +443,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
         #region Members
         [XmlIgnore] public IRobotFactory mRobotFactory;
-        [XmlIgnore] public IRobot mRobot;
+        [XmlIgnore] public AbstractRobot mRobot;
         [XmlIgnore] public ILogger mLogger;
         [XmlIgnore] public int ConfigsCount, SameTimeOpen, SameTimeOpenCount, MaxEquityDrawdownCount;
         [XmlIgnore] public int MaxBalanceDrawdownCount;
