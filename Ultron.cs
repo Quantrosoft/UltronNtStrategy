@@ -743,7 +743,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         // Called at bars frequency
         protected override void OnBar()
         {
-            LastBar = Bars.Count;
+            LastBar = mRobot.QcBars.Count;
         }
         #endregion
 
@@ -1208,9 +1208,9 @@ namespace NinjaTrader.NinjaScript.Strategies
                     var propertyValue = Enum.Parse(prop.PropertyType, valueAsTrimmedString, true);
                     prop.SetValue(currentBot, Enum.ToObject(prop.PropertyType, Convert.ToUInt64(propertyValue)), null);
                 }
-                //else if (property.PropertyType == typeof(TimeFrame))
+                //else if (property.PropertyType == typeof(mTimeFrame))
                 //{
-                //    prop.SetValue(currentBot, TimeFrame.Parse(valueAsTrimmedString), null);
+                //    prop.SetValue(currentBot, mTimeFrame.Parse(valueAsTrimmedString), null);
                 //}
                 else
                 {

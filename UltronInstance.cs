@@ -172,9 +172,9 @@ namespace cAlgo.Robots
             Ma2ma1 = Ma2Value - Ma1Value;
             Ma3ma4Diff = Math.Abs(Ma3Value - Ma4Value);
 
-            Close1 = mBot.Bars.ClosePrices.Last(1);
-            Close2 = mBot.Bars.ClosePrices.Last(2);
-            Open2 = mBot.Bars.OpenPrices.Last(2);
+            Close1 = mBot.mRobot.QcBars.BidClosePrices.Last(1);
+            Close2 = mBot.mRobot.QcBars.BidClosePrices.Last(2);
+            Open2 = mBot.mRobot.QcBars.BidOpenPrices.Last(2);
             #endregion
 
             #region Close
@@ -190,7 +190,7 @@ namespace cAlgo.Robots
             #endregion
 
             #region Open
-            if (mBot.Bars.Count > mBot.LastBar)
+            if (mBot.mRobot.QcBars.Count > mBot.LastBar)
                 if (!mIsLong
                     && STATUS_IDLE == mState
                     && IsTradingTime
@@ -221,7 +221,7 @@ namespace cAlgo.Robots
                         mState = STATUS_TRADING;
                 }
 
-            if (mBot.Bars.Count > mBot.LastBar)
+            if (mBot.mRobot.QcBars.Count > mBot.LastBar)
                 if (mIsLong
                     && STATUS_IDLE == mState
                     && IsTradingTime
