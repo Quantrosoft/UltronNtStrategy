@@ -782,20 +782,20 @@ namespace NinjaTrader.NinjaScript.Strategies
             }
 
             // calc and print performance numbers
-            int winningTrades = History.Where(x => x.NetProfit >= 0).Count();
-            int loosingTrades = History.Where(x => x.NetProfit < 0).Count();
+            int mWinningTrades = History.Where(x => x.NetProfit >= 0).Count();
+            int mLoosingTrades = History.Where(x => x.NetProfit < 0).Count();
             var netProfit = History.Sum(x => x.NetProfit);
             var annualProfit = netProfit / ((Time - mRobot.InitialTime).TotalDays / 365);
-            int totalTrades = winningTrades + loosingTrades;
-            //var averageProfitPer10k = 0 == totalTrades ? 0 : netProfit / totalTrades * 10000 / Robot.InitialAccountBalance;
-            var annualProfitPercent = 0 == totalTrades ? 0 : 100.0 * annualProfit / mRobot.InitialAccountBalance;
-            var lossProfit = History.Where(x => x.NetProfit < 0).Sum(x => x.NetProfit);
-            ProfitFactor = 0 == loosingTrades ? 0 : Math.Abs(History.Where(x => x.NetProfit >= 0).Sum(x => x.NetProfit) / lossProfit);
+            int mTotalTrades = mWinningTrades + mLoosingTrades;
+            //var averageProfitPer10k = 0 == mTotalTrades ? 0 : netProfit / mTotalTrades * 10000 / Robot.InitialAccountBalance;
+            var annualProfitPercent = 0 == mTotalTrades ? 0 : 100.0 * annualProfit / mRobot.InitialAccountBalance;
+            var mLossProfit = History.Where(x => x.NetProfit < 0).Sum(x => x.NetProfit);
+            ProfitFactor = 0 == mLoosingTrades ? 0 : Math.Abs(History.Where(x => x.NetProfit >= 0).Sum(x => x.NetProfit) / mLossProfit);
             var maxCurrentEquityDdPercent = 100 * MaxEquityDrawdownValue / MaxEquity;
             var maxStartEquityDdPercent = 100 * MaxEquityDrawdownValue / mRobot.InitialAccountBalance;
             Calmar = 0 == MaxEquityDrawdownValue ? 0 : annualProfit / MaxEquityDrawdownValue;
-            var winningRatioPercent = 0 == totalTrades ? 0 : 100 * (double)winningTrades / totalTrades;
-            TradesPerMonth = ((double)totalTrades / ((Time - mRobot.InitialTime).TotalDays / 365)) / 12;
+            var winningRatioPercent = 0 == mTotalTrades ? 0 : 100 * (double)mWinningTrades / mTotalTrades;
+            TradesPerMonth = ((double)mTotalTrades / ((Time - mRobot.InitialTime).TotalDays / 365)) / 12;
             ProfitConstanceness = CalculateGoodnessOfFit(History) * 100; // R² = 1 means perfect fit, R² = 0 means no fit
             //var SharpeRatio = SharpeSortino(false, History.Select(trade => trade.NetProfit));
             //var SortinoRatio = SharpeSortino(true, History.Select(trade => trade.NetProfit));
@@ -834,7 +834,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             infoText += "\nMax Current Equity Drawdown %: " + ConvertUtils.DoubleToString(maxCurrentEquityDdPercent, 2);
             infoText += "\nMax Start Equity Drawdown %: " + ConvertUtils.DoubleToString(maxStartEquityDdPercent, 2);
             infoText += "\nNet Profit: " + Account.Asset + " " + ConvertUtils.DoubleToString(netProfit, 2);
-            infoText += "\nProfit Factor: " + (0 == loosingTrades
+            infoText += "\nProfit Factor: " + (0 == mLoosingTrades
                 ? "-"
                 : ConvertUtils.DoubleToString(ProfitFactor, 2));
             //infoText += "\nSharpe Ratio: " + ConvertUtils.DoubleToString(SharpeRatio, 2);
