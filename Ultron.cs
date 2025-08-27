@@ -21,23 +21,9 @@ SOFTWARE.
 */
 
 #region Usings
-#define CKECK_MZx
-#define USE_R2Sx
-
-#if USE_R2S
-using R2sIndis;
-using R2sIndis.NT8;
-using R2sIndis.NT8.Algo;
-using R2sIndis.NT8.Algo.Indicators;
-#endif
-#if CKECK_MZ
-using MZpack;
-using MZpack.NT8;
-using MZpack.NT8.Algo;
-using MZpack.NT8.Algo.Indicators;
-#endif
+#if CTRADER
 using cAlgo.API;
-#if !CTRADER
+#else
 using NinjaTrader.Cbi;
 using NinjaTrader.Data;
 using NinjaTrader.Gui;
@@ -45,7 +31,6 @@ using NinjaTrader.Gui.NinjaScript;
 using NinjaTrader.NinjaScript;
 using NinjaTrader.NinjaScript.Strategies;
 using System.ComponentModel.DataAnnotations;
-using cAlgo.Robots;
 #endif
 using RobotLib;
 using RobotLib.Cs;
@@ -59,9 +44,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Text;
 using System.Xml.Serialization;
-
 using TdsCommons;
-using static TdsCommons.CoFu;
 using System.ComponentModel;
 #endregion
 
@@ -79,15 +62,16 @@ using System.ComponentModel;
  */
 
 #if CTRADER
-namespace cAlgo.Robots
+namespace cAlgo.API
 {
+    public class Strategy : Robot { }
     [Robot(TimeZone = TimeZones.UTC, AccessRights = AccessRights.FullAccess)]
 #else
 namespace NinjaTrader.NinjaScript.Strategies
 {
     [CategoryOrder("System", 1)]
 #endif
-    public class UltronParent : Robot
+    public class UltronParent : Strategy
     {
         #region History
         // There must be an space between name and version!
@@ -182,7 +166,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         public string ConfigPath { get; set; } = "";
 
 #if CTRADER
-        [Parameter("ProfitMode", Group = "System", DefaultValue = ProfitMode.Lots)]
+        [Parameter("ProfitMode", Group = "System", DefaultValue = ProfitModes.Lots)]
 #else
         [NinjaScriptProperty]
         [Display(Name = "ProfitMode",
@@ -190,7 +174,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             Order = 7,
             Description = "")]
 #endif
-        public ProfitMode ProfitMode { get; set; }
+        public ProfitModes ProfitMode { get; set; }
 
 #if CTRADER
         [Parameter("ProfitModeValue", Group = "System", DefaultValue = 20)]
@@ -296,22 +280,22 @@ namespace NinjaTrader.NinjaScript.Strategies
 
         #region Optimization Targets
 #if CTRADER
-        [Parameter("TargetNetProfit", Group = "Optimization Targets")]
+        [Parameter("TargetAccountNetProfit", Group = "Optimization Targets")]
 #else
         [NinjaScriptProperty]
-        [Display(Name = "TargetNetProfit",
-            GroupName = "11 Optimization Targets",
+        [Display(Name = "TargetAccountNetProfit",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
-        public string TargetNetProfit { get; set; } = "";
+        public string TargetAccountNetProfit { get; set; } = "";
 
 #if CTRADER
         [Parameter("TargetMaxBalanceDrawdown", Group = "Optimization Targets")]
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetMaxBalanceDrawdown",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -322,7 +306,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetMaxEquityDrawdown",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -333,7 +317,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetWinningTrades",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -344,7 +328,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetLosingTrades",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -355,7 +339,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetTotalTrades",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -366,7 +350,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetAverageTrades",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -377,7 +361,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetProfitFactor",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -388,7 +372,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetCalmarRatio",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -399,7 +383,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetTradesPerMonth",
-                    GroupName = "11 Optimization Targets",
+                    GroupName = "13 Optimization Targets",
                     Order = 1,
                     Description = "")]
 #endif
@@ -410,7 +394,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetChanceRiskRatio",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -421,7 +405,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetAverageDuration",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -432,7 +416,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #else
         [NinjaScriptProperty]
         [Display(Name = "TargetProfitConstanceness",
-            GroupName = "11 Optimization Targets",
+            GroupName = "13 Optimization Targets",
             Order = 1,
             Description = "")]
 #endif
@@ -443,7 +427,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
         #region Members
         [XmlIgnore] public IRobotFactory mRobotFactory;
-        [XmlIgnore] public IRobot mRobot;
+        [XmlIgnore] public AbstractRobot mRobot;
         [XmlIgnore] public ILogger mLogger;
         [XmlIgnore] public int ConfigsCount, SameTimeOpen, SameTimeOpenCount, MaxEquityDrawdownCount;
         [XmlIgnore] public int MaxBalanceDrawdownCount;
@@ -473,78 +457,13 @@ namespace NinjaTrader.NinjaScript.Strategies
             {"XTIUSD", "SpotCrude"},
             {"XNGUSD", "NatGas"}
         };
-#if CKECK_MZ || USE_R2S
-       private IVolumeProfile mCurrent;
-        private StrategyVolumeDeltaIndicator mVolumeDeltaIndicator;
-        private StrategyVolumeProfileIndicator mVolumeProfileIndicator;
-#endif
-        #endregion
-
-        #region ctor
-#if CKECK_MZ || USE_R2S
-        public Road2Success()
-        {
-            // Set OnCreateIndicators delegate
-            OnCreateIndicators = new OnCreateIndicatorsDelegate(CreateIndicators);
-
-            // Set OnBarCloseHandler for our on bar close strategy
-            //OnBarCloseHandler = new OnTickDelegate(StrategyOnBarCloseHandler);
-        }
-#endif
         #endregion
 
         #region OnStart
 #if !CTRADER
-
-#if CKECK_MZ || USE_R2S
-        public List<TickIndicator> CreateIndicators()
-        {
-            // Initialize new mzIndicators list
-            var r2sIndicators = new List<TickIndicator>();
-
-            mVolumeDeltaIndicator = new StrategyVolumeDeltaIndicator(this, @"Volume Delta")
-            {
-                Calculate = Calculate.OnEachTick, // Force Calculate
-                VolumeDeltaMode = VolumeDeltaMode.Delta, // Delta mode
-                DeltaMode = DeltaMode.Cumulative,  // Cumulative Delta
-                TradeFilterMin = 0,  // Filters
-                TradeFilterMax = -1,
-                LevelsEnabled = true,
-            };
-
-            // Add indicator to the list
-            r2sIndicators.Add(mVolumeDeltaIndicator);
-#if truex
-            mVolumeProfileIndicator = new StrategyVolumeProfileIndicator(this, @"Volume Profile")
-            {
-                Calculate = Calculate.OnBarClose, // Force Calculate OnBarClose for Minute accuracy
-                ShowProfileType = ProfileType.VP_TPO,  // Volume profile and Time Price Opportunity
-                ProfileAccuracy = ProfileAccuracy.Minute,
-                ProfileCreation = ProfileCreation.Session, // Bar, Daily, Weekly, ...
-                POCMode = LevelMode.Developing,
-                VAHVALMode = LevelMode.On,
-                VWAPMode = VWAPMode.DynamicStdDev1,
-                ProfileWidthPercentage = 20,
-                Values1KDivider = false,
-
-                // No stacked profiles
-                StackedProfileCreation1 = ProfileCreation.None,
-                StackedProfileCreation2 = ProfileCreation.None,
-                StackedProfileCreation3 = ProfileCreation.None
-            };
-            r2sIndicators.Add(mVolumeProfileIndicator);
-#endif
-            return r2sIndicators;
-        }
-#endif
         protected override void OnSetDefaults()
         {
             Name = "Ultron";
-#if CKECK_MZ || USE_R2S
-            // This is required for backtesting in Strategy Analyzer,
-            // set false if you don't need it to reduce loading time
-            EnableBacktesting = true;
-#endif
         }
 
         protected override void OnConfigure()
@@ -628,7 +547,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             }
             #endregion
 
-            mRobot.DataLoadedInit();
+            mRobot.Start();
             //Positions.Opened += OnPositionOpened;
             Positions.Closed += OnPositionClosed;
             //PendingOrders.Cancelled += OnPendingOrderCancelled;
@@ -668,16 +587,16 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                     systemBot.OnInstanceTick();
 
-                    sInitialLots = string.Format(UsCulture, "{0:N2}\t",
+                    sInitialLots = string.Format(CoFu.UsCulture, "{0:N2}\t",
                        systemBot.BotSymbol.VolumeInUnitsToQuantity(systemBot.InitialVolume));
 
                     sTp += ("" == sTp ? " " : ", ")
-                        + systemBot.TrademanagementTakeProfit.ToString("F2", UsCulture)
+                        + systemBot.TrademanagementTakeProfit.ToString("F2", CoFu.UsCulture)
                         + " " + Account.Asset.Name + " = "
                         + systemBot.TpPoints / systemBot.InitialVolume + " Ticks";
 
                     sSl += ("" == sSl ? " " : ", ")
-                        + systemBot.TrademanagementStopLoss.ToString("F2", UsCulture)
+                        + systemBot.TrademanagementStopLoss.ToString("F2", CoFu.UsCulture)
                         + " " + Account.Asset.Name + " = "
                         + systemBot.SlPoints / systemBot.InitialVolume + " Ticks";
 
@@ -686,22 +605,22 @@ namespace NinjaTrader.NinjaScript.Strategies
                         + systemBot.TradeDirection.ToString();
                 }
 
-            Max(ref MaxMargin, Account.Margin);
-            if (Max(ref SameTimeOpen, Positions.Count))
+            CoFu.Max(ref MaxMargin, Account.Margin);
+            if (CoFu.Max(ref SameTimeOpen, Positions.Count))
             {
                 SameTimeOpenDateTime = Time;
                 SameTimeOpenCount = History.Count;
             }
 
-            Max(ref MaxBalance, Account.Balance);
-            if (Max(ref MaxBalanceDrawdownValue, MaxBalance - Account.Balance))
+            CoFu.Max(ref MaxBalance, Account.Balance);
+            if (CoFu.Max(ref MaxBalanceDrawdownValue, MaxBalance - Account.Balance))
             {
                 MaxBalanceDrawdownTime = Time;
                 MaxBalanceDrawdownCount = History.Count;
             }
 
-            Max(ref MaxEquity, Account.Equity);
-            if (Max(ref MaxEquityDrawdownValue, MaxEquity - Account.Equity))
+            CoFu.Max(ref MaxEquity, Account.Equity);
+            if (CoFu.Max(ref MaxEquityDrawdownValue, MaxEquity - Account.Equity))
             {
                 MaxEquityDrawdownTime = Time;
                 MaxEquityDrawdownCount = History.Count;
@@ -743,7 +662,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         // Called at bars frequency
         protected override void OnBar()
         {
-            LastBar = Bars.Count;
+            LastBar = mRobot.QcBars.Count;
         }
         #endregion
 
@@ -782,20 +701,22 @@ namespace NinjaTrader.NinjaScript.Strategies
             }
 
             // calc and print performance numbers
-            int winningTrades = History.Where(x => x.NetProfit >= 0).Count();
-            int loosingTrades = History.Where(x => x.NetProfit < 0).Count();
-            var netProfit = History.Sum(x => x.NetProfit);
-            var annualProfit = netProfit / ((Time - mRobot.InitialTime).TotalDays / 365);
-            int totalTrades = winningTrades + loosingTrades;
-            //var averageProfitPer10k = 0 == totalTrades ? 0 : netProfit / totalTrades * 10000 / Robot.InitialAccountBalance;
-            var annualProfitPercent = 0 == totalTrades ? 0 : 100.0 * annualProfit / mRobot.InitialAccountBalance;
-            var lossProfit = History.Where(x => x.NetProfit < 0).Sum(x => x.NetProfit);
-            ProfitFactor = 0 == loosingTrades ? 0 : Math.Abs(History.Where(x => x.NetProfit >= 0).Sum(x => x.NetProfit) / lossProfit);
+            int mWinningTrades = History.Where(x => x.NetProfit >= 0).Count();
+            int mLoosingTrades = History.Where(x => x.NetProfit < 0).Count();
+            var NetProfit = History.Sum(x => x.NetProfit);
+            var annualProfit = NetProfit / ((Time - mRobot.InitialTime).TotalDays / 365);
+            int TotalTrades = mWinningTrades + mLoosingTrades;
+            //var averageProfitPer10k = 0 == TotalTrades ? 0 : NetProfit / TotalTrades * 10000 / Robot.InitialAccountBalance;
+            var annualProfitPercent = 0 == TotalTrades ? 0 : 100.0 * annualProfit / mRobot.InitialAccountBalance;
+            var mLossProfit = History.Where(x => x.NetProfit < 0).Sum(x => x.NetProfit);
+            ProfitFactor = 0 == mLoosingTrades 
+                ? 0 
+                : Math.Abs(History.Where(x => x.NetProfit >= 0).Sum(x => x.NetProfit) / mLossProfit);
             var maxCurrentEquityDdPercent = 100 * MaxEquityDrawdownValue / MaxEquity;
             var maxStartEquityDdPercent = 100 * MaxEquityDrawdownValue / mRobot.InitialAccountBalance;
             Calmar = 0 == MaxEquityDrawdownValue ? 0 : annualProfit / MaxEquityDrawdownValue;
-            var winningRatioPercent = 0 == totalTrades ? 0 : 100 * (double)winningTrades / totalTrades;
-            TradesPerMonth = ((double)totalTrades / ((Time - mRobot.InitialTime).TotalDays / 365)) / 12;
+            var winningRatioPercent = 0 == TotalTrades ? 0 : 100 * (double)mWinningTrades / TotalTrades;
+            TradesPerMonth = ((double)TotalTrades / ((Time - mRobot.InitialTime).TotalDays / 365)) / 12;
             ProfitConstanceness = CalculateGoodnessOfFit(History) * 100; // R² = 1 means perfect fit, R² = 0 means no fit
             //var SharpeRatio = SharpeSortino(false, History.Select(trade => trade.NetProfit));
             //var SortinoRatio = SharpeSortino(true, History.Select(trade => trade.NetProfit));
@@ -833,8 +754,8 @@ namespace NinjaTrader.NinjaScript.Strategies
                + "; Count# " + MaxEquityDrawdownCount.ToString();
             infoText += "\nMax Current Equity Drawdown %: " + ConvertUtils.DoubleToString(maxCurrentEquityDdPercent, 2);
             infoText += "\nMax Start Equity Drawdown %: " + ConvertUtils.DoubleToString(maxStartEquityDdPercent, 2);
-            infoText += "\nNet Profit: " + Account.Asset + " " + ConvertUtils.DoubleToString(netProfit, 2);
-            infoText += "\nProfit Factor: " + (0 == loosingTrades
+            infoText += "\nNet Profit: " + Account.Asset + " " + ConvertUtils.DoubleToString(NetProfit, 2);
+            infoText += "\nProfit Factor: " + (0 == mLoosingTrades
                 ? "-"
                 : ConvertUtils.DoubleToString(ProfitFactor, 2));
             //infoText += "\nSharpe Ratio: " + ConvertUtils.DoubleToString(SharpeRatio, 2);
@@ -872,7 +793,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             if (MaxEquityDrawdownValue > StartBalance)
                 return -2e3;
 
-            var targetNetProfit = GetFitnessValue(TargetNetProfit, args.NetProfit);
+            var targetAccountNetProfit = GetFitnessValue(TargetAccountNetProfit, args.NetProfit);
             var targetMaxBalance = GetFitnessValue(TargetMaxBalanceDrawdown, args.MaxBalanceDrawdown);
             var targetMaxEquityDrawdown = GetFitnessValue(TargetMaxEquityDrawdown, args.MaxEquityDrawdown);
             var targetWinningTrades = GetFitnessValue(TargetWinningTrades, args.WinningTrades);
@@ -888,7 +809,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             var targetProfitConstanceness = GetFitnessValue(TargetProfitConstanceness, ProfitConstanceness);
 
             var retVal = 100    // Max. possible is 100%
-                - targetNetProfit
+                - targetAccountNetProfit
                 - targetMaxBalance
                 - targetMaxEquityDrawdown
                 - targetWinningTrades
@@ -944,7 +865,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             Chart.RemoveAllObjects();
 
-            if (TradeDirections.FromConfigFiles == TradeDirection
+            if (TradeDirections.na == TradeDirection
                 && "" == ConfigPath)
             {
                 Print("ConfigPath" + " must be set");
@@ -954,7 +875,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             StartBalance = Account.Balance;
             var isOptimization = RunningMode == RunningMode.Optimization;
-            var isUseParameters = TradeDirections.FromConfigFiles != TradeDirection;
+            var isUseParameters = TradeDirections.na != TradeDirection;
 
             var symbolCsv_All_VisualSplit = SymbolCsvAllVisual.Split(',');
             var isAllSymbols = false;
@@ -1034,7 +955,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                 {
                     string workSymbol;
                     var configText = File.ReadAllText(mAllConfigFiles[i]);
-                    var success = GetParameterFromConfigFile(configText,
+                    var success = CoFu.GetParameterFromConfigFile(configText,
                         objectName,
                         "SymbolCsvAllVisual",
                         out string value,
@@ -1044,7 +965,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                         workSymbol = value;
                     else
                     {
-                        success = GetParameterFromConfigFile(configText,
+                        success = CoFu.GetParameterFromConfigFile(configText,
 #if CTRADER
                            "Chart",
                            "Symbol",
@@ -1063,7 +984,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                     if (isAllSymbols || symbolCsv_All_VisualSplit.Contains(workSymbol))
                     {
-                        success = GetParameterFromConfigFile(configText,
+                        success = CoFu.GetParameterFromConfigFile(configText,
                            objectName,
                            "TradeDirection",
                            out value,
@@ -1097,7 +1018,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                         // TradeDirection conversion
                         if ((TradeDirection == dir)
-                           || (TradeDirections.FromConfigFiles == TradeDirection
+                           || (TradeDirections.na == TradeDirection
                               && (TradeDirections.Long == dir
                                  || TradeDirections.Short == dir
                               )))
@@ -1165,7 +1086,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                 if (null != jsonText)
                 {
                     // skip properties which are not in config file like SymbolCsvAllVisual
-                    var success = GetParameterFromConfigFile(jsonText,
+                    var success = CoFu.GetParameterFromConfigFile(jsonText,
                        objectName,
                        propertyName,
                        out value,
@@ -1200,7 +1121,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                 else if (prop.PropertyType == typeof(bool))
                     prop.SetValue(currentBot, bool.Parse(valueAsTrimmedString), null);
                 else if (prop.PropertyType == typeof(double))
-                    prop.SetValue(currentBot, double.Parse(valueAsTrimmedString, UsCulture), null);
+                    prop.SetValue(currentBot, double.Parse(valueAsTrimmedString, CoFu.UsCulture), null);
                 else if (prop.PropertyType == typeof(int))
                     prop.SetValue(currentBot, int.Parse(valueAsTrimmedString), null);
                 else if (prop.PropertyType.IsEnum)
@@ -1208,9 +1129,9 @@ namespace NinjaTrader.NinjaScript.Strategies
                     var propertyValue = Enum.Parse(prop.PropertyType, valueAsTrimmedString, true);
                     prop.SetValue(currentBot, Enum.ToObject(prop.PropertyType, Convert.ToUInt64(propertyValue)), null);
                 }
-                //else if (property.PropertyType == typeof(TimeFrame))
+                //else if (property.PropertyType == typeof(mTimeFrame))
                 //{
-                //    prop.SetValue(currentBot, TimeFrame.Parse(valueAsTrimmedString), null);
+                //    prop.SetValue(currentBot, mTimeFrame.Parse(valueAsTrimmedString), null);
                 //}
                 else
                 {
@@ -1232,7 +1153,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             if (double.IsNaN(value))
                 return 3e3;
 
-            var dTarget = double.Parse(Regex.Replace(target, @"[^0-9.]", ""), UsCulture);
+            var dTarget = double.Parse(Regex.Replace(target, @"[^0-9.]", ""), CoFu.UsCulture);
 
             // more than target gives max result
             if (target.ToLower().Contains('+'))
@@ -1248,7 +1169,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             return Math.Abs(dTarget - value) / dTarget * 100;
         }
 
-        // returns R² of HistoricalTrade NetProfits over the time
+        // returns R² of HistoricalTrade AccountNetProfits over the time
         // R² = 1 means perfect fit, R² = 0 means no fit
         public double CalculateGoodnessOfFit(History trades)
         {
@@ -1269,7 +1190,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             // Get regression parameters: intercept and slope
             // Moved from Math.Numerics to CoFu since NinjaTrader cannot work with Math.Numerics :-(
-            var (intercept, slope) = Fit(x, y);
+            var (intercept, slope) = CoFu.Fit(x, y);
 
             // Calculate predicted y-values
             var yPredicted = x.Select(xi => slope * xi + intercept);

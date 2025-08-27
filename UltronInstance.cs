@@ -1,4 +1,4 @@
-﻿/* MIT License
+/* MIT License
 Copyright (c) 2025 Quantrosoft Pty. Ltd.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,7 +28,6 @@ using cAlgo.API.Internals;
 #else
 using NinjaTrader.Cbi;
 using NinjaTrader.Core.FloatingPoint;
-using cAlgo.API;
 using NinjaTrader.Data;
 using NinjaTrader.Gui;
 using NinjaTrader.Gui.Chart;
@@ -43,14 +42,18 @@ using RobotLib;
 using TdsCommons;
 using System.Xml.Serialization;
 
-namespace cAlgo.Robots
+#if CTRADER
+namespace cAlgo.API
+#else
+namespace NinjaTrader.NinjaScript.Strategies
+#endif
 {
     public class UltronInstance
     {
         #region Instace Parameters
         public TradeDirections BotDirection { get; set; }
         public int BotNumber { get; set; }
-        public ProfitMode ProfitMode { get; set; }
+        public ProfitModes ProfitMode { get; set; }
         public double ProfitModeValue { get; set; }
         public string SymbolCsvAllVisual { get; set; }
         public int BarsMinutes { get; set; }
@@ -107,8 +110,8 @@ namespace cAlgo.Robots
 #if CTRADER
         private MovingAverage ma1, ma2, ma3, ma4;
 #else
-        private WMAct ma1, ma2;
-        private SMAct ma3, ma4;
+        private WMA ma1, ma2;
+        private SMA ma3, ma4;
 #endif
         #endregion
 
@@ -140,10 +143,10 @@ namespace cAlgo.Robots
             ma4 = mBot.Indicators.MovingAverage(mBot.Bars.ClosePrices, Period4, MovingAverageType.Simple);
 #else
             // Initialize moving averages
-            //ma1 = mBot.WMAct(mBot.Opens[mBot.TICK_BID], Period1);  // Weighted MA on Open Prices
-            //ma2 = mBot.WMAct(mBot.Closes[mBot.TICK_BID], Period2); // Weighted MA on Close Prices
-            //ma3 = mBot.SMAct(mBot.Closes[mBot.TICK_BID], Period3); // Simple MA on Close Prices
-            //ma4 = mBot.SMAct(mBot.Closes[mBot.TICK_BID], Period4); // Simple MA on Close Prices
+            ma1 = mBot.WMA(mBot.Opens[0], Period1); // Weighted MA on Open Prices
+            ma2 = mBot.WMA(mBot.Closes[0], Period2); // Weighted MA on Close Prices
+            ma3 = mBot.SMA(mBot.Closes[0], Period3); // Simple MA on Close Prices
+            ma4 = mBot.SMA(mBot.Closes[0], Period4); // Simple MA on Close Prices
 #endif
             return true;
         }
@@ -159,22 +162,22 @@ namespace cAlgo.Robots
             mBot.mRobot.CalcProfitMode2Lots(mBot.Symbol, ProfitMode, ProfitModeValue, 0, 0,
                out double desiredMoney, out double lotSize);
             var volume = mBot.Symbol.NormalizeVolumeInUnits(mBot.Symbol.QuantityToVolumeInUnits(lotSize));
-            var targetProfit = mBot.mRobot.CalcPointsAndVolume2Money(mBot.Symbol, TakeProfitPips * 10, volume);
-            var targetStopLoss = mBot.mRobot.CalcPointsAndVolume2Money(mBot.Symbol, StopLossPips * 10, volume);
+            var targetProfit = mBot.mRobot.CalcTicksAndVolume2Money(mBot.Symbol, TakeProfitPips * 10, volume);
+            var targetStopLoss = mBot.mRobot.CalcTicksAndVolume2Money(mBot.Symbol, StopLossPips * 10, volume);
             var openComment = mBot.mRobot.MakeLogComment(mBot.Symbol, mBot.Version);
 
-            Ma1Value = ma1.Result.LastValue;
-            Ma2Value = ma2.Result.LastValue;
-            Ma3Value = ma3.Result.LastValue;
-            Ma4Value = ma4.Result.LastValue;
+            Ma1Value = ma1.GetLast(0);
+            Ma2Value = ma2.GetLast(0);
+            Ma3Value = ma3.GetLast(0);
+            Ma4Value = ma4.GetLast(0);
 
             Ma1ma2 = Ma1Value - Ma2Value;
             Ma2ma1 = Ma2Value - Ma1Value;
             Ma3ma4Diff = Math.Abs(Ma3Value - Ma4Value);
 
-            Close1 = mBot.Bars.ClosePrices.Last(1);
-            Close2 = mBot.Bars.ClosePrices.Last(2);
-            Open2 = mBot.Bars.OpenPrices.Last(2);
+            Close1 = mBot.mRobot.QcBars.BidClosePrices.Last(1);
+            Close2 = mBot.mRobot.QcBars.BidClosePrices.Last(2);
+            Open2 = mBot.mRobot.QcBars.BidOpenPrices.Last(2);
             #endregion
 
             #region Close
@@ -190,7 +193,7 @@ namespace cAlgo.Robots
             #endregion
 
             #region Open
-            if (mBot.Bars.Count > mBot.LastBar)
+            if (mBot.mRobot.QcBars.Count > mBot.LastBar)
                 if (!mIsLong
                     && STATUS_IDLE == mState
                     && IsTradingTime
@@ -221,7 +224,7 @@ namespace cAlgo.Robots
                         mState = STATUS_TRADING;
                 }
 
-            if (mBot.Bars.Count > mBot.LastBar)
+            if (mBot.mRobot.QcBars.Count > mBot.LastBar)
                 if (mIsLong
                     && STATUS_IDLE == mState
                     && IsTradingTime
