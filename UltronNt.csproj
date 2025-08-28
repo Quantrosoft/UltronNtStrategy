@@ -6,8 +6,4 @@
       <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
       <IsPackable>false</IsPackable>
    </PropertyGroup>
-   <ItemGroup>
-     <Compile Include="Ultron.cs" />
-     <Compile Include="UltronInstance.cs" />
-   </ItemGroup>
 </Project>
