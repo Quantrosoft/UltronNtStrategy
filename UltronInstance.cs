@@ -216,7 +216,9 @@ namespace NinjaTrader.NinjaScript.Strategies
                        "",
                        null, //StopLossPips,
                        null, //TakeProfitPips,
-                       openComment);
+                       openComment,
+                       CalculationMode.Price,
+                       ProfitCloseModes.TakeProfit);
 
                     if (!result.IsSuccessful)
                         mBot.Print("Error when placing a sell order");
@@ -247,7 +249,9 @@ namespace NinjaTrader.NinjaScript.Strategies
                        "",
                        null, //StopLossPips,
                        null, //TakeProfitPips,
-                       openComment);
+                       openComment,
+                       CalculationMode.Price,
+                       ProfitCloseModes.TakeProfit);
 
                     if (!result.IsSuccessful)
                         mBot.Print("Error when placing a buy order");
