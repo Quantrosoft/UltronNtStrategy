@@ -46,6 +46,7 @@ using System.Text;
 using System.Xml.Serialization;
 using TdsCommons;
 using System.ComponentModel;
+using cAlgoNt8Wrapper;
 #endregion
 
 /* Knowledge base
