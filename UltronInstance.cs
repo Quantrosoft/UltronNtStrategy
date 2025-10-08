@@ -52,7 +52,7 @@ namespace NinjaTrader.NinjaScript.Strategies
     public class UltronInstance
     {
         #region Instace Parameters
-        public TradeDirections BotDirection { get; set; }
+        public TdsCommons.TradeDirectionsEnhanced BotDirection { get; set; }
         public int BotNumber { get; set; }
         public ProfitModes ProfitMode { get; set; }
         public double ProfitModeValue { get; set; }
@@ -78,7 +78,7 @@ namespace NinjaTrader.NinjaScript.Strategies
         #endregion
 
         #region Members
-        [XmlIgnore] public TradeDirections TradeDirection { get; set; }
+        [XmlIgnore] public TdsCommons.TradeDirectionsEnhanced TradeDirection { get; set; }
         [XmlIgnore] public int OpenDurationCount;
         [XmlIgnore] public TimeSpan MinOpenDuration = new TimeSpan(long.MaxValue);
         [XmlIgnore] public TimeSpan AvgOpenDurationSum = new TimeSpan(0);
@@ -130,7 +130,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             mMa1Ma2MinVal = Ma1Ma2MinPercent / 100;
             mMa1Ma2MaxVal = Ma1Ma2MaxPercent / 100;
             mBot.Positions.Closed += OnInstancePositionClosed;
-            mIsLong = BotDirection == TradeDirections.Long;
+            mIsLong = BotDirection == TdsCommons.TradeDirectionsEnhanced.Long;
 
             return true;
         }

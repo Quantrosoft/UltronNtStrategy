@@ -153,7 +153,7 @@ namespace NinjaTrader.NinjaScript.Strategies
            Order = 5,
            Description = "")]
 #endif
-        public TradeDirections TradeDirection { get; set; }
+        public TdsCommons.TradeDirectionsEnhanced TradeDirection { get; set; }
 
 #if CTRADER
         [Parameter("ConfigPath", Group = "System", DefaultValue = "")]
@@ -579,7 +579,7 @@ namespace NinjaTrader.NinjaScript.Strategies
             var sSl = "";
             var sBots = "";
 
-            if (IsLicense && (TradeDirection != TradeDirections.Neither || IsTickServer))
+            if (IsLicense && (TradeDirection != TdsCommons.TradeDirectionsEnhanced.Neither || IsTickServer))
                 for (int j = 0; j < FilteredOptiBots.Count; j++)
                 {
                     var systemBot = FilteredOptiBots[j];
@@ -866,7 +866,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             Chart.RemoveAllObjects();
 
-            if (TradeDirections.na == TradeDirection
+            if (TdsCommons.TradeDirectionsEnhanced.na == TradeDirection
                 && "" == ConfigPath)
             {
                 Print("ConfigPath" + " must be set");
@@ -876,7 +876,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
             StartBalance = Account.Balance;
             var isOptimization = RunningMode == RunningMode.Optimization;
-            var isUseParameters = TradeDirections.na != TradeDirection;
+            var isUseParameters = TdsCommons.TradeDirectionsEnhanced.na != TradeDirection;
 
             var symbolCsv_All_VisualSplit = SymbolCsvAllVisual.Split(',');
             var isAllSymbols = false;
@@ -993,7 +993,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 #if CTRADER
                         var dir = (TradeDirections)Int32.Parse(value);
 #else
-                        var dir = (TradeDirections)Enum.Parse(typeof(TradeDirections), value);
+                        var dir = (TdsCommons.TradeDirectionsEnhanced)Enum.Parse(typeof(TdsCommons.TradeDirectionsEnhanced), value);
 #endif
                         UltronInstance currentBot = new UltronInstance();
 
@@ -1019,9 +1019,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                         // TradeDirection conversion
                         if ((TradeDirection == dir)
-                           || (TradeDirections.na == TradeDirection
-                              && (TradeDirections.Long == dir
-                                 || TradeDirections.Short == dir
+                           || (TdsCommons.TradeDirectionsEnhanced.na == TradeDirection
+                              && (TdsCommons.TradeDirectionsEnhanced.Long == dir
+                                 || TdsCommons.TradeDirectionsEnhanced.Short == dir
                               )))
                         {
                             currentBot.TradeDirection = dir;
