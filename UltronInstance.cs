@@ -21,12 +21,6 @@ SOFTWARE.
 */
 
 using System;
-#if CTRADER
-using cAlgo.API;
-using cAlgo.API.Indicators;
-using cAlgo.API.Internals;
-#else
-using cAlgoNt8Wrapper;
 using NinjaTrader.Cbi;
 using NinjaTrader.Core.FloatingPoint;
 using NinjaTrader.Data;
@@ -38,21 +32,15 @@ using NinjaTrader.NinjaScript;
 using NinjaTrader.NinjaScript.DrawingTools;
 using NinjaTrader.NinjaScript.Indicators;
 using NinjaTrader.NinjaScript.Strategies;
-#endif
-using RobotLib;
-using TdsCommons;
 using System.Xml.Serialization;
 
-#if CTRADER
-namespace cAlgo.API
-#else
 namespace NinjaTrader.NinjaScript.Strategies
-#endif
 {
     public class UltronInstance
     {
         #region Instace Parameters
-        public TdsCommons.TradeDirectionsEnhanced BotDirection { get; set; }
+        // Native NinjaTrader: Use TradeDirections from RobotStrategy
+        public TradeDirections BotDirection { get; set; }
         public int BotNumber { get; set; }
         public ProfitModes ProfitMode { get; set; }
         public double ProfitModeValue { get; set; }
@@ -78,14 +66,14 @@ namespace NinjaTrader.NinjaScript.Strategies
         #endregion
 
         #region Members
-        [XmlIgnore] public TdsCommons.TradeDirectionsEnhanced TradeDirection { get; set; }
+        [XmlIgnore] public TradeDirections TradeDirection { get; set; }
         [XmlIgnore] public int OpenDurationCount;
         [XmlIgnore] public TimeSpan MinOpenDuration = new TimeSpan(long.MaxValue);
         [XmlIgnore] public TimeSpan AvgOpenDurationSum = new TimeSpan(0);
         [XmlIgnore] public TimeSpan MaxOpenDuration = new TimeSpan(0);
         [XmlIgnore] public int BotCurrentNumber;
         [XmlIgnore] public int BotMaxNumber;
-        [XmlIgnore] public Symbol BotSymbol;
+        [XmlIgnore] public NinjaTrader.Cbi.Instrument BotSymbol;
         [XmlIgnore] public double InitialVolume;
         [XmlIgnore] public bool IsOpened;
         [XmlIgnore] public double LastProfit;
@@ -106,18 +94,14 @@ namespace NinjaTrader.NinjaScript.Strategies
         private int mState;
         private double mMa3ma4DiffMaxVal, mMa1Ma2MaxVal, mMa1Ma2MinVal;
         private const int STATUS_IDLE = 0, STATUS_TRADING = 1;
-        private UltronParent mBot;
+        private Strategy mBot;
         private bool mIsLong;
-#if CTRADER
-        private MovingAverage ma1, ma2, ma3, ma4;
-#else
-        private WMA ma1, ma2;
+private WMA ma1, ma2;
         private SMA ma3, ma4;
-#endif
-        #endregion
+#endregion
 
         #region OnStart
-        public bool OnInstanceConfigure(UltronParent bot)
+        public bool OnInstanceConfigure(Strategy bot)
         {
             mBot = bot;
 
@@ -130,26 +114,19 @@ namespace NinjaTrader.NinjaScript.Strategies
             mMa1Ma2MinVal = Ma1Ma2MinPercent / 100;
             mMa1Ma2MaxVal = Ma1Ma2MaxPercent / 100;
             mBot.Positions.Closed += OnInstancePositionClosed;
-            mIsLong = BotDirection == TdsCommons.TradeDirectionsEnhanced.Long;
+            mIsLong = BotDirection == TradeDirections.Long;
 
             return true;
         }
 
         public bool OnInstanceDataLoaded()
         {
-#if CTRADER
-            ma1 = mBot.Indicators.MovingAverage(mBot.Bars.OpenPrices, Period1, MovingAverageType.Weighted);
-            ma2 = mBot.Indicators.MovingAverage(mBot.Bars.ClosePrices, Period2, MovingAverageType.Weighted);
-            ma3 = mBot.Indicators.MovingAverage(mBot.Bars.ClosePrices, Period3, MovingAverageType.Simple);
-            ma4 = mBot.Indicators.MovingAverage(mBot.Bars.ClosePrices, Period4, MovingAverageType.Simple);
-#else
-            // Initialize moving averages
+// Initialize moving averages
             ma1 = mBot.WMA(mBot.Opens[0], Period1); // Weighted MA on Open Prices
             ma2 = mBot.WMA(mBot.Closes[0], Period2); // Weighted MA on Close Prices
             ma3 = mBot.SMA(mBot.Closes[0], Period3); // Simple MA on Close Prices
             ma4 = mBot.SMA(mBot.Closes[0], Period4); // Simple MA on Close Prices
-#endif
-            return true;
+return true;
         }
         #endregion
 
@@ -157,28 +134,34 @@ namespace NinjaTrader.NinjaScript.Strategies
         public void OnInstanceTick()
         {
             #region Entry stuff
-            NormalizedNyTime = CoFu.TimeUtc2Nyt(mBot.Time, true);
+            // Native NinjaTrader: Convert to New York time
+            var nyTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            NormalizedNyTime = TimeZoneInfo.ConvertTimeFromUtc(mBot.Time.ToUniversalTime(), nyTimeZone);
             IsTradingTime = NormNyHourStart <= NormalizedNyTime.Hour && NormalizedNyTime.Hour <= NormNyHourEnd;
 
-            mBot.mRobot.CalcProfitMode2Lots(mBot.Symbol, ProfitMode, ProfitModeValue, 0, 0,
+            // Native NinjaTrader: Use RobotStrategy helper methods
+            mBot.CalcProfitMode2Lots(mBot.Instrument, ProfitMode, ProfitModeValue, 0, 0,
                out double desiredMoney, out double lotSize);
-            var volume = mBot.Symbol.NormalizeVolumeInUnits(mBot.Symbol.QuantityToVolumeInUnits(lotSize));
-            var targetProfit = mBot.mRobot.CalcTicksAndVolume2Money(mBot.Symbol, TakeProfitPips * 10, volume);
-            var targetStopLoss = mBot.mRobot.CalcTicksAndVolume2Money(mBot.Symbol, StopLossPips * 10, volume);
-            var openComment = mBot.mRobot.MakeLogComment(mBot.Symbol, mBot.Version);
+            // Native NinjaTrader: Use Instrument.MasterInstrument for volume calculations
+            var volume = mBot.Instrument.MasterInstrument.RoundToTickSize(lotSize * mBot.Instrument.MasterInstrument.PointValue);
+            var targetProfit = mBot.CalcTicksAndVolume2Money(mBot.Instrument, TakeProfitPips * 10, volume);
+            var targetStopLoss = mBot.CalcTicksAndVolume2Money(mBot.Instrument, StopLossPips * 10, volume);
+            var openComment = mBot.Version; // Native NinjaTrader: Simplified comment
 
-            Ma1Value = ma1.GetLast(0);
-            Ma2Value = ma2.GetLast(0);
-            Ma3Value = ma3.GetLast(0);
-            Ma4Value = ma4.GetLast(0);
+            // Native NinjaTrader: Use indicator values directly
+            Ma1Value = ma1[0];
+            Ma2Value = ma2[0];
+            Ma3Value = ma3[0];
+            Ma4Value = ma4[0];
 
             Ma1ma2 = Ma1Value - Ma2Value;
             Ma2ma1 = Ma2Value - Ma1Value;
             Ma3ma4Diff = Math.Abs(Ma3Value - Ma4Value);
 
-            Close1 = mBot.mRobot.QcBars.BidClosePrices.Last(1);
-            Close2 = mBot.mRobot.QcBars.BidClosePrices.Last(2);
-            Open2 = mBot.mRobot.QcBars.BidOpenPrices.Last(2);
+            // Native NinjaTrader: Use BarsArray[0] directly
+            Close1 = mBot.BarsArray[0].GetClose(1);
+            Close2 = mBot.BarsArray[0].GetClose(2);
+            Open2 = mBot.BarsArray[0].GetOpen(2);
             #endregion
 
             #region Close
@@ -194,7 +177,8 @@ namespace NinjaTrader.NinjaScript.Strategies
             #endregion
 
             #region Open
-            if (mBot.mRobot.QcBars.Count > mBot.LastBar)
+            // Native NinjaTrader: Use BarsArray[0].Count instead of mRobot.QcBars
+            if (mBot.BarsArray[0].Count > mBot.LastBar)
                 if (!mIsLong
                     && STATUS_IDLE == mState
                     && IsTradingTime
@@ -212,7 +196,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                     //mBeforeOpenMargin = Account.Margin;
                     var result = mBot.ExecuteMarketOrder(TradeType.Sell,
-                       mBot.Symbol.Name,
+                       mBot.Instrument.FullName,
                        volume,
                        "",
                        null, //StopLossPips,
@@ -221,13 +205,14 @@ namespace NinjaTrader.NinjaScript.Strategies
                        CalculationMode.Price,
                        ProfitCloseModes.TakeProfit);
 
-                    if (!result.IsSuccessful)
+                    if (!(result.IsSuccessful ?? false))
                         mBot.Print("Error when placing a sell order");
                     else
                         mState = STATUS_TRADING;
                 }
 
-            if (mBot.mRobot.QcBars.Count > mBot.LastBar)
+            // Native NinjaTrader: Use BarsArray[0].Count instead of mRobot.QcBars
+            if (mBot.BarsArray[0].Count > mBot.LastBar)
                 if (mIsLong
                     && STATUS_IDLE == mState
                     && IsTradingTime
@@ -245,7 +230,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 
                     //mBeforeOpenMargin = Account.Margin;
                     var result = mBot.ExecuteMarketOrder(TradeType.Buy,
-                       mBot.Symbol.Name,
+                       mBot.Instrument.FullName,
                        volume,
                        "",
                        null, //StopLossPips,
@@ -254,7 +239,7 @@ namespace NinjaTrader.NinjaScript.Strategies
                        CalculationMode.Price,
                        ProfitCloseModes.TakeProfit);
 
-                    if (!result.IsSuccessful)
+                    if (!(result.IsSuccessful ?? false))
                         mBot.Print("Error when placing a buy order");
                     else
                         mState = STATUS_TRADING;
@@ -270,9 +255,9 @@ namespace NinjaTrader.NinjaScript.Strategies
         #endregion
 
         #region Methods
-        public void OnInstancePositionClosed(PositionClosedEventArgs args)
+        public void OnInstancePositionClosed(object sender, PositionClosedEventArgs args)
         {
-            if (args.Position.SymbolName == mBot.Symbol.Name)
+            if (args.Position.SymbolName == mBot.Instrument.FullName)
                 mState = STATUS_IDLE;
         }
         #endregion
